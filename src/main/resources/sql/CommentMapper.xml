@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="CommentMapper">
+
+    <resultMap id="CommentSelectMap" type="comment">
+        <result property="commentNo" column="COMMENT_NO" jdbcType="NUMERIC"/>
+        <result property="commentContent" column="COMMENT_CONTENT" jdbcType="VARCHAR"/>
+        <result property="prodNo" column="PROD_NO" jdbcType="NUMERIC"/>
+        <result property="regDate" column="REG_DATE" jdbcType="TIMESTAMP"/>
+        <result property="recommend" column="RECOMMEND" jdbcType="INTEGER"/>
+
+    </resultMap>
+
+    <insert id="addComment" parameterType="map">
+        INSERT into COMMENTS (COMMENT_NO,COMMENT_CONTENT,PROD_NO,REG_DATE)
+        VALUES (SEQ_COMMENT_COMMENT_NO.nextval,#{commentContent},#{postNo},CURRENT_TIMESTAMP)
+    </insert>
+    <select id="getCommentList" parameterType="int" resultMap="CommentSelectMap">
+        SELECT COMMENT_NO, COMMENT_CONTENT,PROD_NO,REG_DATE
+        FROM COMMENTS
+        WHERE PROD_NO = #{prodNo}
+    </select>
+    <update id="updateComment" parameterType="int">
+        UPDATE COMMENT_CONTENT
+        SET COMMENTS
+        WHERE COMMENT_NO = #{commentNo}
+    </update>
+    <!-- 추천은 usermapper에서 해당 게시물에 좋아요 누르면 컬럼 추가해야할듯? 다시누르면 삭제 일단은 댓글 추가만하자-->
+    <update id="recommend" parameterType="boolean">
+        UPDATE COMMENTS
+        <if test= "like">
+            SET RECOMMEND +1
+        </if>
+        <if test="!like">
+            SET RECOMMEND -1
+        </if>
+    </update>
+    <delete id="deleteComment" parameterType="int">
+        DELETE FROM COMMENTS
+        WHERE COMMENT_NO = #{commentNo}
+    </delete>
+</mapper>

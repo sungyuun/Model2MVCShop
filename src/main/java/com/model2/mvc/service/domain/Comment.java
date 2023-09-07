@@ -6,8 +6,9 @@ public class Comment {
 	
 	private int commentNo;
 	private String commentContent;
-	private Date createAt;
+	private Date regDate;
 	private int recommend;
+	private int prodNo;
 	
 	public Comment() {
 		
@@ -29,12 +30,12 @@ public class Comment {
 		this.commentContent = commentContent;
 	}
 
-	public Date getCreateAt() {
-		return createAt;
+	public Date getRegDate() {
+		return regDate;
 	}
 
-	public void setCreateAt(Date createAt) {
-		this.createAt = createAt;
+	public void setRegDate(Date regDate) {
+		this.regDate = regDate;
 	}
 
 	public int getRecommend() {
@@ -45,9 +46,17 @@ public class Comment {
 		this.recommend = recommend;
 	}
 
+	public int getProdNo() {
+		return prodNo;
+	}
+
+	public void setProdNo(int prodNo) {
+		this.prodNo = prodNo;
+	}
+
 	@Override
 	public String toString() {
-		return "Comment [commentNo=" + commentNo + ", commentContent=" + commentContent + ", createAt=" + createAt
+		return "Comment [commentNo=" + commentNo + ", commentContent=" + commentContent + ", createAt=" + regDate
 				+ ", recommend=" + recommend + "]";
 	}
 	

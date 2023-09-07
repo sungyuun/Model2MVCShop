@@ -16,7 +16,7 @@ public interface CommentDao {
 	
 	public void deleteComment(Comment comment);
 	
-	public List<Comment> getCommentList() throws Exception;
+	public List<Comment> getCommentList(int prodNo) throws Exception;
 
 	public int getTotalCount(Search search) throws Exception ;
 }

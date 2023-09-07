@@ -12,7 +12,7 @@ import com.model2.mvc.service.comment.CommentDao;
 import com.model2.mvc.service.domain.Comment;
 
 
-@Repository("CommentDaoImpl")
+@Repository("commentDaoImpl")
 public class CommentDaoImpl implements CommentDao{
 
 	@Autowired
@@ -40,7 +40,9 @@ public class CommentDaoImpl implements CommentDao{
 
 	public List<Comment> getCommentList() throws Exception {
 
-		return null;
+		List<Comment> list = commentDao.getCommentList(postNo);
+
+		return list;
 	}
 
 
