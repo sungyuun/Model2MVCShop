@@ -1,18 +1,35 @@
 package com.model2.mvc.service.domain;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 
 public class Comment {
 	
+	private String userId;
 	private int commentNo;
 	private String commentContent;
-	private Date regDate;
+	private String password;
+	private Timestamp regDate;
 	private int recommend;
 	private int prodNo;
 	
 	public Comment() {
 		
 	}
+
+	
+
+	public String getUserId() {
+		return userId;
+	}
+
+
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+
 
 	public int getCommentNo() {
 		return commentNo;
@@ -30,13 +47,31 @@ public class Comment {
 		this.commentContent = commentContent;
 	}
 
-	public Date getRegDate() {
+	
+
+	public String getPassword() {
+		return password;
+	}
+
+
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+
+
+	public Timestamp getRegDate() {
 		return regDate;
 	}
 
-	public void setRegDate(Date regDate) {
+
+
+	public void setRegDate(Timestamp regDate) {
 		this.regDate = regDate;
 	}
+
+
 
 	public int getRecommend() {
 		return recommend;
@@ -54,11 +89,19 @@ public class Comment {
 		this.prodNo = prodNo;
 	}
 
+
+
 	@Override
 	public String toString() {
-		return "Comment [commentNo=" + commentNo + ", commentContent=" + commentContent + ", createAt=" + regDate
-				+ ", recommend=" + recommend + "]";
+		return "Comment [userId=" + userId + ", commentNo=" + commentNo + ", commentContent=" + commentContent
+				+ ", password=" + password + ", regDate=" + regDate + ", recommend=" + recommend + ", prodNo=" + prodNo
+				+ "]";
 	}
+
+
+
+
+	
 	
 	
 }

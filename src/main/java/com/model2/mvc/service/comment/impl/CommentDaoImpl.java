@@ -1,6 +1,7 @@
 package com.model2.mvc.service.comment.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +24,9 @@ public class CommentDaoImpl implements CommentDao{
 		this.sqlSession = sqlSession;
 	}
 	
-	
-	public void addComment(Comment comment) {
-		sqlSession.insert("CommentMapper.addComment",comment);
+
+	public int addComment(Map<String, Object> commentMap) {
+		return sqlSession.insert("CommentMapper.addComment",commentMap);
 	}
 	public void updateComment(Comment comment) {
 		sqlSession.update("CommentMapper.updateComment",comment);
@@ -35,15 +36,19 @@ public class CommentDaoImpl implements CommentDao{
 	}
 
 	public void deleteComment(Comment comment) {
-		sqlSession.delete("CommentMapper.deleteComment")
+		sqlSession.delete("CommentMapper.deleteComment");
 	}
 
-	public List<Comment> getCommentList() throws Exception {
+	public List<Comment> getCommentList(int prodNo) throws Exception {
 
-		List<Comment> list = commentDao.getCommentList(postNo);
-
-		return list;
+		return sqlSession.selectList("CommentMapper.getCommentList",prodNo);
 	}
+
+
+//	public int getTotalCount(Search search) throws Exception {
+//		return 0;
+//	}
+
 
 
 }

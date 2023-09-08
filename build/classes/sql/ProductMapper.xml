@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ProductMapper">
+ 	
+ 	
+	<resultMap id="productSelectMap" type="product">
+		
+		<result property="prodNo" 		column="prod_no"        	jdbcType="INTEGER"/>
+		<result property="prodName" 	column="prod_name"      	jdbcType="VARCHAR"/>
+		<result property="prodDetail" 	column="prod_detail"  		jdbcType="VARCHAR"/>
+		<result property="manuDate" 	column="manufacture_day"	jdbcType="VARCHAR"/>
+		<result property="price" 		column="price"				jdbcType="INTEGER"/>
+		<result property="fileName" 	column="image_file"			jdbcType="VARCHAR"/>
+		<result property="regDate"	 	column="reg_date"			jdbcType="DATE"/>
+		<result property="proTranCode"  column="trancode"			jdbcType="INTEGER"/>
+		
+	</resultMap>
+	
+	<insert id="addProduct"	parameterType="product">
+		<!-- 파일 구현시 사용
+		INSERT 
+	    INTO product (prod_no,prod_name,prod_detail,manufacture_day,price,image_file,reg_date) 
+	    VALUES (seq.NEXTVAL,#{prodName},#{prodDetail},#{manuDate},#{price},#{fileName},SYSDATE) 
+	    -->
+	    INSERT 
+	    INTO product (prod_no,prod_name,prod_detail,manufacture_day,price,reg_date) 
+	    VALUES (seq.NEXTVAL,#{prodName},#{prodDetail},#{manuDate},#{price},SYSDATE)
+	    <selectKey keyProperty="prodNo" resultType="Integer" order="AFTER">
+	        SELECT seq.currval FROM dual
+	    </selectKey>
+	 </insert>
+	 
+	 <!-- SQL : SELECT ONE -->
+	 <select 	id="getProduct"	parameterType="int"	resultMap="productSelectMap">
+		select p.prod_no,p.MANUFACTURE_DAY,p.PRICE,PROD_DETAIL,p.PROD_NAME,p.IMAGE_FILE,p.REG_DATE,NVL(t.TRAN_STATUS_CODE,0) as trancode 
+		from product p LEFT JOIN transaction t ON p.prod_no = t.prod_no 
+		WHERE p.prod_no=#{prodNo}
+	 </select>
+	 
+	 <select  id="getProductList"  parameterType="search"	resultMap="productSelectMap">
+	  	SELECT *
+	  	FROM (	SELECT inner_table.* , ROWNUM AS row_seq
+	  					FROM(	SELECT ROWNUM,p.image_file,p.prod_no,p.MANUFACTURE_DAY,p.PRICE,PROD_DETAIL,p.PROD_NAME,p.REG_DATE,NVL(t.TRAN_STATUS_CODE,0) as trancode 
+	  							FROM product p LEFT JOIN transaction t ON p.prod_no = t.prod_no
+											
+								<if test="searchCondition != null">
+									<where>
+										<if test="searchCondition == 0 and searchKeyword !='' ">
+											
+											AND p.prod_no LIKE '%${searchKeyword}%'					 				
+										</if>
+										<if test="searchCondition == 1 and searchKeyword !='' ">
+							 				AND prod_name LIKE '%${searchKeyword}%'
+										</if>
+										<if test="searchCondition == 2 and searchKeyword !='' ">
+							 				AND p.price = #{searchKeyword}
+										</if>
+									</where>
+								</if>
+								ORDER BY p.prod_no ) inner_table
+			WHERE ROWNUM &lt;= #{endRowNum} )
+		WHERE row_seq BETWEEN #{startRowNum} AND #{endRowNum} 
+	 </select>
+	 	<!--  위 두번째 subQuery 의  
+	 			WHERE ROWNUM &lt;= #{endRowNum} ) 는
+	 			WHERE ROWNUM <= #{endRowNum} ) 의미이며..
+	 			< 는 keyword 로 &lt; 를	사용.
+	 			
+	 			<![CDATA[  ~~~  ]]> 를 이용하여 아래와 같이 사용  할 수 있다.
+	 			CDATA ==> Character Data 의 의미 Java 에서 \n 같은 특수문자 처리  
+
+				WHERE ROWNUM <![CDATA[ <=]]> #{endRowNum} )
+		-->
+	
+	<!-- SQL : SELECT ROW Count -->	 
+	 <select  id="getTotalCount"  parameterType="search"	 resultType="int">
+	  	SELECT COUNT(*)
+	  	FROM(	SELECT *
+						FROM product
+						<if test="searchCondition != null">
+							<where>
+								<if test="searchCondition == 0 and searchKeyword !='' ">
+									
+									AND p.prod_no LIKE '%${searchKeyword}%'					 				
+								</if>
+								<if test="searchCondition == 1 and searchKeyword !='' ">
+					 				AND prod_name LIKE '%${searchKeyword}%'
+								</if>
+								<if test="searchCondition == 2 and searchKeyword !='' ">
+					 				AND p.price = #{searchKeyword}
+								</if>
+							</where>
+						</if> ) countTable						
+	 </select>
+
+		<!-- SQL : UPDATE -->
+	 <update	id="updateProduct"	parameterType="product" >
+	   	UPDATE product
+	   	<set>
+	   		prod_name 		= #{prodName} ,
+			prod_detail		= #{prodDetail},
+			manufacture_day = #{manuDate} ,
+			price			= #{price}
+	   	</set>
+	   	WHERE prod_no = #{prodNo}
+	 </update>	          
+	 <select  id="getTotalProductName" resultMap="productSelectMap">
+	  	SELECT PROD_NAME FROM product 
+	 </select>
+</mapper>

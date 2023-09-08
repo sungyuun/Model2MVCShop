@@ -7,12 +7,111 @@
 <html>
 <head>
 
-<link rel="stylesheet" href="/css/admin.css" type="text/css">
-	<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
-	<script type="text/javascript">
+	<link rel="stylesheet" href="/css/admin.css" type="text/css">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script type="text/javascript" src="../javascript/dateFormat.js"></script>
+    <script type="text/javascript">
+    
+    function initializeClick() {
+		  console.log("hi");
+		  
+		  $('span[name="update"]').on("click",function(){
+			  	const commentNo = $(this).attr('commentno');
+			  	const formElement = $('span[name="update"][commentno=' + commentNo + ']').prev('form');
+
+			    if (formElement.length === 0) {
+			      // 같은 commentNo를 가진 input 엘리먼트가 없는 경우에만 추가
+			    	 $('span[name="update"][commentno=' + commentNo + ']').before('<form style="display: inline;"><input type="text" name="checkPassword" placeholder="비밀번호를 입력해주세요"></input><button name="checkPasswordbt">확인</button></form>');
+			    } else {
+			      // 이미 input 엘리먼트가 있는 경우 제거
+			      formElement.remove();
+			    } 
+  	  	  });
+  	  	  $('span[name="delete"]').on("click", function() {
+	  	  		const commentNo = $(this).attr('commentno');
+	  	  		const formElement = $('span[name="update"][commentno=' + commentNo + ']').prev('form');
 	
-	
-	</script>
+			    if (formElement.length === 0) {
+			      // 같은 commentNo를 가진 input 엘리먼트가 없는 경우에만 추가
+			      $('span[name="update"][commentno=' + commentNo + ']').before('<form style="display: inline;"><input type="text" name="checkPassword" placeholder="비밀번호를 입력해주세요"></input><input name="checkPasswordbt" type="button">확인</input></form>');
+			    		  
+			    } else {
+			      // 이미 input 엘리먼트가 있는 경우 제거
+			    	formElement.remove();
+			    } 
+	  	  });
+	  }
+    
+	    $.ajax({
+	        url: "/comment/getCommentList/${ product.prodNo }",
+	        type: "GET",
+	        contentType: "application/json",
+	        success: function (data) {
+	          console.log(data);
+	          console.log("댓글가져옴");
+	          data.forEach((comment) => {
+	        	const formattedDate = formatDate(new Date(comment.regDate));
+	            $("#comments").prepend(
+	            	"<div prodNo="+comment.prodNo+" commentNo="+comment.commentNo+">"+
+	             		"<span userId="+comment.userId+">"+comment.userId+"</span> <span>"+ comment.commentContent +"</span> <span commentno = "+comment.commentNo+" name='update'>수 정 </span><span commentno = "+comment.commentNo+" name='delete'>삭 제</span> <span>" +formattedDate +"</span>"+
+	              		""+
+	              	"</div>"
+	            );
+	          });
+	          initializeClick();
+	        },
+	      });
+
+      $(() => {
+    	  
+      });
+      
+        
+      $(document).ready(function() {
+    	  
+    	  $('button[name="updateCommentbt"]').on("click",()=>{
+    		  $.ajax({
+                  url: "/comment/updateComment",
+                  type: "POST",
+                  contentType: "application/json",
+                  data: JSON.stringify({
+                    commentContent: $('textarea[name="commentContent"]').val(),
+                    password: $('input[name="password"]').val(),
+                    prodNo : ${product.prodNo}
+                  }),
+                  success: function (comments) {},
+                });
+    	  })
+
+    	  
+    	  $("button").on("click", () => {
+              if ($("textarea").val() < 5) {
+                alert("최소 5글자는 쳐주세요.");
+                return;
+              }
+              $.ajax({
+                url: "/comment/addComment",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                  commentContent: $('textarea[name="commentContent"]').val(),
+                  password: $('input[name="password"]').val(),
+                  prodNo : ${product.prodNo}
+                }),
+                success: function (comments) {
+                	console.log(comments);
+                },
+              });
+            });
+    	  
+    	  	$('input[name="checkPasswordbt"]').on("click",function(){
+    	  		console.log("일단눌림");
+    	  	})
+    	  
+          });
+    	
+ 
+    </script>
 
 <title>상품 상세조회</title>
 </head>
@@ -181,6 +280,13 @@
 	</tr>
 </table>
 </form>
-
+	<hr/>
+	<div id="comments"></div>
+	<form>
+	      <textarea name="commentContent"></textarea>
+	      <input type="text" name="password"/>
+	      <input type="hidden" name="postNo" value="${ post.postNo }" />
+	      <button type="button">제출</button>
+    </form>
 </body>
 </html>
