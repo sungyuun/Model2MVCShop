@@ -24,22 +24,22 @@ public class CommentServiceImpl implements CommentService {
         this.commentDao = commentDao;
     }
 
-	public int addComment(Map<String, Object> commentMap) {
-		
-		return commentDao.addComment(commentMap);
-	}
+//	public void addComment(Map<String, Object> commentMap) {
+//		
+//		commentDao.addComment(commentMap);
+//	}
 
     public void updateComment(Comment comment) {
-       commentDao. updateComment(comment);
+       commentDao.updateComment(comment);
     }
     public void recommend(boolean click) {
 
         commentDao.recommend(click);
     }
 
-    public void deleteComment(Comment comment) {
+    public void deleteComment(int commentId) {
 
-        commentDao.deleteComment(comment);
+        commentDao.deleteComment(commentId);
     }
 
     public List<Comment> getCommentList(int postNo) throws Exception {
@@ -48,6 +48,19 @@ public class CommentServiceImpl implements CommentService {
 
         return list;
     }
+
+	
+	public Comment getComment(int commentNo) throws Exception {
+		
+		return commentDao.getComment(commentNo);
+	}
+
+
+	public void addComment(Comment comment) {
+		commentDao.addComment(comment);
+		
+	}
+	
 
 
 

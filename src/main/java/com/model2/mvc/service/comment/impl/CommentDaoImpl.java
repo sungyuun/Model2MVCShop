@@ -25,24 +25,39 @@ public class CommentDaoImpl implements CommentDao{
 	}
 	
 
-	public int addComment(Map<String, Object> commentMap) {
-		return sqlSession.insert("CommentMapper.addComment",commentMap);
+//	public void addComment(Map<String, Object> commentMap) {
+//		sqlSession.insert("CommentMapper.addComment",commentMap);
+//	}
+	
+	public void recommend(boolean click) {
+		sqlSession.update("CommentMapper.recommend",click);
 	}
 	public void updateComment(Comment comment) {
 		sqlSession.update("CommentMapper.updateComment",comment);
 	}
-	public void recommend(boolean click) {
-		sqlSession.update("CommentMapper.recommend",click);
+	public void deleteComment(int commentId) {
+		System.out.println("ÄÚ¸àÆ® ³Ñ¹ö :"+commentId);
+		sqlSession.delete("CommentMapper.deleteComment",commentId);
 	}
-
-	public void deleteComment(Comment comment) {
-		sqlSession.delete("CommentMapper.deleteComment");
-	}
-
+	
 	public List<Comment> getCommentList(int prodNo) throws Exception {
 
 		return sqlSession.selectList("CommentMapper.getCommentList",prodNo);
 	}
+	
+	public Comment getComment(int commentNo) throws Exception {
+		System.out.println(commentNo);	
+		return sqlSession.selectOne("CommentMapper.getComment",commentNo);
+	}
+
+
+	public void addComment(Comment comment) {
+		sqlSession.insert("CommentMapper.addComment",comment);
+		
+	}
+
+
+
 
 
 //	public int getTotalCount(Search search) throws Exception {

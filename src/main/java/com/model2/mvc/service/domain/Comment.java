@@ -36,7 +36,12 @@ public class Comment {
 	}
 
 	public void setCommentNo(int commentNo) {
+		System.out.println("인트 들어옴");
 		this.commentNo = commentNo;
+	}
+	public void setCommentNo(Integer commentNo) {
+		System.out.println("인테저 들어옴");
+		this.commentNo = (int)commentNo;
 	}
 
 	public String getCommentContent() {

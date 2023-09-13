@@ -6,31 +6,43 @@
 
 <mapper namespace="CommentMapper">
 
-    <resultMap id="CommentSelectMap" type="comment">
-        <result property="commentNo" column="COMMENT_NO" jdbcType="NUMERIC"/>
+    <resultMap id="commentSelectMap" type="comment">
+        <result property="commentNo" column="COMMENT_NO" jdbcType="INTEGER"/>
         <result property="userId" column="USER_ID" jdbcType="VARCHAR"/>
         <result property="commentContent" column="COMMENT_CONTENT" jdbcType="VARCHAR"/>
         <result property="password" column="PASSWORD" jdbcType="VARCHAR"/>
-        <result property="prodNo" column="PROD_NO" jdbcType="NUMERIC"/>
+        <result property="prodNo" column="PROD_NO" jdbcType="INTEGER"/>
         <result property="regDate" column="REG_DATE" jdbcType="TIMESTAMP"/>
         <result property="recommend" column="RECOMMEND" jdbcType="INTEGER"/>
 
     </resultMap>
 
-    <insert id="addComment" parameterType="map">
-        INSERT into COMMENTS (COMMENT_NO,USER_ID,COMMENT_CONTENT,PASSWORD,PROD_NO,REG_DATE)
-        VALUES (SEQ_COMMENT_NO.nextval,#{userId},#{commentContent},#{password},#{prodNo},CURRENT_TIMESTAMP)
-    </insert>
-    <select id="getCommentList" parameterType="int" resultMap="CommentSelectMap">
+    <insert id="addComment" parameterType="comment">
+	    INSERT INTO COMMENTS (COMMENT_NO, USER_ID, COMMENT_CONTENT, PASSWORD, PROD_NO, REG_DATE)
+	    VALUES (SEQ_COMMENT_NO.nextval, #{userId}, #{commentContent}, #{password}, #{prodNo}, CURRENT_TIMESTAMP)
+	    <selectKey keyProperty="commentNo" resultType="Integer" order="AFTER">
+	        SELECT SEQ_COMMENT_NO.currval FROM dual
+	    </selectKey>
+	</insert>
+    <select id="getCommentList" parameterType="int" resultMap="commentSelectMap">
         SELECT COMMENT_NO,USER_ID,COMMENT_CONTENT,PROD_NO,REG_DATE
         FROM COMMENTS
         WHERE PROD_NO = #{prodNo}
     </select>
-    <update id="updateComment" parameterType="map">
-        UPDATE COMMENT_CONTENT
-        SET COMMENTS
-        WHERE COMMENT_NO = #{commentNo} AND PASSWORD = #{password}
+    <select id="getComment" parameterType="int" resultMap="commentSelectMap">
+        SELECT *
+        FROM COMMENTS
+        WHERE COMMENT_NO = #{commentNo}
+    </select>
+    <update id="updateComment" parameterType="comment">
+        UPDATE COMMENTS
+        SET COMMENT_CONTENT=#{commentContent}
+        WHERE COMMENT_NO = #{commentNo}
     </update>
+    <delete id="deleteComment" parameterType="int">
+        DELETE FROM COMMENTS
+        WHERE COMMENT_NO = #{commentNo}
+    </delete>
     <!-- 추천은 usermapper에서 해당 게시물에 좋아요 누르면 컬럼 추가해야할듯? 다시누르면 삭제 일단은 댓글 추가만하자-->
     <update id="recommend" parameterType="boolean">
         UPDATE COMMENTS
@@ -41,8 +53,11 @@
             SET RECOMMEND -1
         </if>
     </update>
-    <delete id="deleteComment" parameterType="map">
+    <!--
+    	<delete id="deleteComment" parameterType="map">
         DELETE FROM COMMENTS
         WHERE COMMENT_NO = #{commentNo} AND PASSWORD = #{password}
     </delete>
+      -->
+    
 </mapper>

@@ -58,10 +58,11 @@ public class ProductController {
 	@RequestMapping(value = "addProduct", method = RequestMethod.POST)
 	public String addProduct( @ModelAttribute("product") Product product,Model model )throws Exception {
            
-        
+        System.out.println(product.getProdNo());
 		product.setManuDate(product.getManuDate().replace("-", ""));
         productService.addProduct(product);
-            
+        System.out.println(product.getProdNo());
+        System.out.println(" »Ú·Îµæ¤§,¤Ñ : "+product.toString());
         product = productService.getProduct(product.getProdNo());
 
 	    model.addAttribute("product", product);
